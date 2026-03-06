@@ -38,7 +38,7 @@ final class OtlpHttpTransport implements TransportInterface
                 'Content-Type' => 'application/json',
                 'X-API-Key' => $this->apiKey,
             ],
-            json_encode($payload),
+            json_encode($payload, JSON_THROW_ON_ERROR),
         );
     }
 

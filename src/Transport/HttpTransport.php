@@ -25,7 +25,7 @@ final class HttpTransport implements TransportInterface
 
         $payload = json_encode([
             'logs' => array_map(fn(Event $e) => $e->toArray(), $events),
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $this->httpClient->post(
             "{$this->apiUrl}/api/v1/ingest",

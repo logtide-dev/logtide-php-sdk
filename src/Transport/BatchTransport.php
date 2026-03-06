@@ -65,6 +65,9 @@ final class BatchTransport implements TransportInterface
     public function sendSpans(array $spans): void
     {
         foreach ($spans as $span) {
+            if (count($this->spanBuffer) >= $this->maxBufferSize) {
+                break;
+            }
             $this->spanBuffer[] = $span;
         }
 

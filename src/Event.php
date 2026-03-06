@@ -43,15 +43,7 @@ final class Event
 
     public static function createError(\Throwable $exception, ?string $service = null): self
     {
-        $event = new self(LogLevel::ERROR, $exception->getMessage(), $service);
-        $event->exception = [
-            'type' => get_class($exception),
-            'message' => $exception->getMessage(),
-            'code' => $exception->getCode(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-        ];
-        return $event;
+        return new self(LogLevel::ERROR, $exception->getMessage(), $service);
     }
 
     public function getId(): string

@@ -147,7 +147,7 @@ final class Scope
             $event->addMetadata('user', $this->user);
         }
 
-        if ($this->level !== null && $event->getLevel() === null) {
+        if ($this->level !== null) {
             $event->setLevel($this->level);
         }
 

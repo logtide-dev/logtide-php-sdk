@@ -48,7 +48,10 @@ final class Client implements ClientInterface
     public function captureException(\Throwable $exception, ?Scope $scope = null): ?string
     {
         foreach ($this->options->getIgnoreExceptions() as $pattern) {
-            if ($exception instanceof $pattern || preg_match($pattern, get_class($exception))) {
+            if ($exception instanceof $pattern) {
+                return null;
+            }
+            if (str_starts_with($pattern, '/') && @preg_match($pattern, get_class($exception))) {
                 return null;
             }
         }

@@ -39,7 +39,7 @@ final class PropagationContext
             $traceId,
             (string) SpanId::generate(),
             $parentSpanId,
-            ($flags & 1) === 1,
+            (hexdec($flags) & 1) === 1,
         );
     }
 

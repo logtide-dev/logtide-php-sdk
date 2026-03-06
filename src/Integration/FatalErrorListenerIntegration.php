@@ -56,6 +56,6 @@ final class FatalErrorListenerIntegration implements IntegrationInterface
 
     public function teardown(): void
     {
-        // Shutdown functions cannot be unregistered
+        self::$registered = false;
     }
 }

@@ -69,10 +69,7 @@ final class Options
             $options->apiKey = $config['api_key'];
         }
 
-        $map = [
-            'service' => 'service',
-            'environment' => 'environment',
-            'release' => 'release',
+        $intKeys = [
             'batch_size' => 'batchSize',
             'flush_interval' => 'flushInterval',
             'max_buffer_size' => 'maxBufferSize',
@@ -81,11 +78,28 @@ final class Options
             'circuit_breaker_threshold' => 'circuitBreakerThreshold',
             'circuit_breaker_reset_ms' => 'circuitBreakerResetMs',
             'max_breadcrumbs' => 'maxBreadcrumbs',
+        ];
+
+        $floatKeys = [
             'traces_sample_rate' => 'tracesSampleRate',
+            'http_timeout' => 'httpTimeout',
+            'http_connect_timeout' => 'httpConnectTimeout',
+        ];
+
+        $boolKeys = [
             'debug' => 'debug',
             'attach_stacktrace' => 'attachStacktrace',
             'send_default_pii' => 'sendDefaultPii',
             'default_integrations' => 'defaultIntegrations',
+        ];
+
+        $stringKeys = [
+            'service' => 'service',
+            'environment' => 'environment',
+            'release' => 'release',
+        ];
+
+        $directKeys = [
             'tags' => 'tags',
             'global_metadata' => 'globalMetadata',
             'integrations' => 'integrations',
@@ -95,11 +109,29 @@ final class Options
             'ignore_exceptions' => 'ignoreExceptions',
             'in_app_included_paths' => 'inAppIncludedPaths',
             'in_app_excluded_paths' => 'inAppExcludedPaths',
-            'http_timeout' => 'httpTimeout',
-            'http_connect_timeout' => 'httpConnectTimeout',
         ];
 
-        foreach ($map as $key => $prop) {
+        foreach ($intKeys as $key => $prop) {
+            if (array_key_exists($key, $config)) {
+                $options->{$prop} = (int) $config[$key];
+            }
+        }
+        foreach ($floatKeys as $key => $prop) {
+            if (array_key_exists($key, $config)) {
+                $options->{$prop} = (float) $config[$key];
+            }
+        }
+        foreach ($boolKeys as $key => $prop) {
+            if (array_key_exists($key, $config)) {
+                $options->{$prop} = (bool) $config[$key];
+            }
+        }
+        foreach ($stringKeys as $key => $prop) {
+            if (array_key_exists($key, $config) && $config[$key] !== null) {
+                $options->{$prop} = (string) $config[$key];
+            }
+        }
+        foreach ($directKeys as $key => $prop) {
             if (array_key_exists($key, $config)) {
                 $options->{$prop} = $config[$key];
             }
