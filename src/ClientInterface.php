@@ -14,7 +14,13 @@ interface ClientInterface
 
     public function captureException(\Throwable $exception, ?Scope $scope = null): ?string;
 
-    public function captureLog(LogLevel $level, string $message, array $metadata = [], ?Scope $scope = null, ?string $service = null): ?string;
+    public function captureLog(
+        LogLevel $level,
+        string $message,
+        array $metadata = [],
+        ?Scope $scope = null,
+        ?string $service = null
+    ): ?string;
 
     public function startSpan(string $operation, array $options = []): Span;
 
