@@ -8,7 +8,7 @@ use LogTide\LogtideSdk;
 
 final class ExceptionListenerIntegration implements IntegrationInterface
 {
-    private ?callable $previousHandler = null;
+    private mixed $previousHandler = null;
     private bool $registered = false;
 
     public function getName(): string

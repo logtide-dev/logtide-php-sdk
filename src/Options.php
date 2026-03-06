@@ -32,16 +32,14 @@ final class Options
     private array $tags = [];
     private array $globalMetadata = [];
 
-    /** @var IntegrationInterface[]|callable|null */
-    private array|callable|null $integrations = null;
+    /** @var IntegrationInterface[]|\Closure|null */
+    private array|\Closure|null $integrations = null;
 
     private ?TransportInterface $transport = null;
 
-    /** @var callable|null */
-    private $beforeSend = null;
+    private ?\Closure $beforeSend = null;
 
-    /** @var callable|null */
-    private $beforeBreadcrumb = null;
+    private ?\Closure $beforeBreadcrumb = null;
 
     /** @var string[] */
     private array $ignoreExceptions = [];
@@ -252,8 +250,8 @@ final class Options
         return $this->globalMetadata;
     }
 
-    /** @return IntegrationInterface[]|callable|null */
-    public function getIntegrations(): array|callable|null
+    /** @return IntegrationInterface[]|\Closure|null */
+    public function getIntegrations(): array|\Closure|null
     {
         return $this->integrations;
     }
@@ -263,12 +261,12 @@ final class Options
         return $this->transport;
     }
 
-    public function getBeforeSend(): ?callable
+    public function getBeforeSend(): ?\Closure
     {
         return $this->beforeSend;
     }
 
-    public function getBeforeBreadcrumb(): ?callable
+    public function getBeforeBreadcrumb(): ?\Closure
     {
         return $this->beforeBreadcrumb;
     }

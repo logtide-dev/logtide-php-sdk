@@ -80,7 +80,7 @@ final class IntegrationRegistry
             return $defaults;
         }
 
-        if (is_callable($userIntegrations)) {
+        if ($userIntegrations instanceof \Closure) {
             return ($userIntegrations)($defaults);
         }
 

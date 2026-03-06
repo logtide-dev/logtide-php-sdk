@@ -10,7 +10,7 @@ use LogTide\Serializer\ErrorSerializer;
 
 final class ErrorListenerIntegration implements IntegrationInterface
 {
-    private ?callable $previousHandler = null;
+    private mixed $previousHandler = null;
     private bool $registered = false;
 
     public function getName(): string
