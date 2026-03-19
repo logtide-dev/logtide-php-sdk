@@ -29,7 +29,7 @@ final class ErrorListenerIntegration implements IntegrationInterface
             string $message,
             string $file,
             int $line,
-        ): ?bool {
+        ): bool {
             if (!(error_reporting() & $severity)) {
                 return false;
             }
@@ -43,7 +43,7 @@ final class ErrorListenerIntegration implements IntegrationInterface
             $hub->captureEvent($event);
 
             if ($this->previousHandler !== null) {
-                return ($this->previousHandler)($severity, $message, $file, $line);
+                return (bool) ($this->previousHandler)($severity, $message, $file, $line);
             }
 
             return false;

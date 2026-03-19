@@ -37,7 +37,7 @@ final class Options
 
     private ?TransportInterface $transport = null;
 
-    /** @var (\Closure(Event, array<string, mixed>): ?Event)|null */
+    /** @var (\Closure(Event, EventHint|null): ?Event)|null */
     private ?\Closure $beforeSend = null;
 
     /** @var (\Closure(Breadcrumb\Breadcrumb): ?Breadcrumb\Breadcrumb)|null */
@@ -263,7 +263,7 @@ final class Options
         return $this->transport;
     }
 
-    /** @return (\Closure(Event, array<string, mixed>): ?Event)|null */
+    /** @return (\Closure(Event, EventHint|null): ?Event)|null */
     public function getBeforeSend(): ?\Closure
     {
         return $this->beforeSend;
