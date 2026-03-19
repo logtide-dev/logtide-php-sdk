@@ -29,7 +29,7 @@ final class ErrorListenerIntegration implements IntegrationInterface
             string $message,
             string $file,
             int $line,
-        ): bool {
+        ): ?bool {
             if (!(error_reporting() & $severity)) {
                 return false;
             }

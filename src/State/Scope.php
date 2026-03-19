@@ -21,10 +21,10 @@ final class Scope
     private BreadcrumbBuffer $breadcrumbs;
     private PropagationContext $propagationContext;
 
-    /** @var callable[] */
+    /** @var array<callable(Event): ?Event> */
     private array $eventProcessors = [];
 
-    /** @var callable[] */
+    /** @var array<callable(Event): ?Event> */
     private static array $globalEventProcessors = [];
 
     public function __construct(int $maxBreadcrumbs = 100)
@@ -123,11 +123,13 @@ final class Scope
         return $this->propagationContext;
     }
 
+    /** @param callable(Event): ?Event $processor */
     public function addEventProcessor(callable $processor): void
     {
         $this->eventProcessors[] = $processor;
     }
 
+    /** @param callable(Event): ?Event $processor */
     public static function addGlobalEventProcessor(callable $processor): void
     {
         self::$globalEventProcessors[] = $processor;
