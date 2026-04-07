@@ -89,6 +89,53 @@ final class EventTest extends TestCase
         $this->assertArrayHasKey('time', $arr);
     }
 
+    /**
+     * The Logtide backend uses Zod's strict `z.string().datetime()` which only
+     * accepts ISO 8601 strings ending in `Z` (UTC). Strings with a numeric
+     * timezone offset like `+00:00` are rejected with a 400 validation error.
+     */
+    public function testTimeIsIso8601WithZSuffix(): void
+    {
+        $event = Event::createLog(LogLevel::INFO, 'msg');
+
+        $time = $event->getTime();
+
+        $this->assertMatchesRegularExpression(
+            '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$/',
+            $time,
+            'Event time must be ISO 8601 UTC with a Z suffix to satisfy Zod strict datetime validation'
+        );
+    }
+
+    /**
+     * The Logtide backend defines `metadata: z.record(z.unknown()).optional()`.
+     * `z.record` requires a JSON object — it rejects arrays. PHP serializes an
+     * empty array to JSON `[]`, so a default `captureLog(...)` call without
+     * any metadata produced a 400 "Expected object, received array".
+     */
+    public function testToArrayMetadataSerializesAsJsonObjectWhenEmpty(): void
+    {
+        $event = Event::createLog(LogLevel::INFO, 'hello');
+
+        $json = json_encode($event->toArray(), JSON_THROW_ON_ERROR);
+
+        $this->assertStringContainsString(
+            '"metadata":{}',
+            $json,
+            'Empty metadata must serialize as JSON object {} — never as array []'
+        );
+    }
+
+    public function testToArrayMetadataSerializesAsJsonObjectWhenPopulated(): void
+    {
+        $event = Event::createLog(LogLevel::INFO, 'hello');
+        $event->setMetadata(['k' => 'v']);
+
+        $json = json_encode($event->toArray(), JSON_THROW_ON_ERROR);
+
+        $this->assertStringContainsString('"metadata":{"k":"v"}', $json);
+    }
+
     public function testToArrayWithoutOptionals(): void
     {
         $event = Event::createLog(LogLevel::INFO, 'basic');

@@ -117,6 +117,26 @@ final class SpanTest extends TestCase
         $this->assertArrayHasKey('timeUnixNano', $events[0]);
     }
 
+    /**
+     * OTLP requires `timeUnixNano` to be a stringified uint64 (digits only).
+     * Casting `(string)(microtime(true) * 1e9)` produces scientific notation
+     * like "1.7755623882398E+18", which the OTLP backend rejects.
+     */
+    public function testAddEventTimeUnixNanoIsIntegerString(): void
+    {
+        $span = new Span('test.op');
+        $span->addEvent('cache.miss');
+
+        $timeUnixNano = $span->getEvents()[0]['timeUnixNano'];
+
+        $this->assertIsString($timeUnixNano);
+        $this->assertMatchesRegularExpression(
+            '/^\d+$/',
+            $timeUnixNano,
+            'timeUnixNano must be a digit-only stringified uint64, not scientific notation'
+        );
+    }
+
     public function testMultipleEvents(): void
     {
         $span = new Span('test.op');

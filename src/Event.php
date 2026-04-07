@@ -30,7 +30,11 @@ final class Event
         ?string $service = null,
     ) {
         $this->id = bin2hex(random_bytes(16));
-        $this->time = (new \DateTimeImmutable())->format('c');
+        // Logtide's backend uses Zod's strict `z.string().datetime()`, which only
+        // accepts ISO 8601 strings ending in `Z` (UTC). Numeric offsets such as
+        // `+00:00` produced by `format('c')` are rejected with HTTP 400.
+        $this->time = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
+            ->format('Y-m-d\TH:i:s.v\Z');
         $this->level = $level;
         $this->message = $message;
         $this->service = $service ?? 'unknown';
@@ -198,12 +202,18 @@ final class Event
 
     public function toArray(): array
     {
+        $meta = $this->buildMetadata();
+
         $data = [
             'time' => $this->time,
             'service' => $this->service,
             'level' => $this->level->value,
             'message' => $this->message,
-            'metadata' => $this->buildMetadata(),
+            // Logtide's `metadata` field is `z.record(z.unknown())` — it must be
+            // a JSON object. PHP serializes an empty array to `[]`, which Zod
+            // rejects as "Expected object, received array". An empty stdClass
+            // forces `{}` so default `captureLog(...)` calls validate cleanly.
+            'metadata' => $meta === [] ? new \stdClass() : $meta,
         ];
 
         if ($this->traceId !== null) {

@@ -86,13 +86,16 @@ final class OtlpHttpTransport implements TransportInterface
 
     private function spanToOtlp(Span $span): array
     {
+        // OTLP requires `*UnixNano` fields to be stringified uint64 values.
+        // Casting `(string)($float * 1e9)` would emit scientific notation
+        // (e.g. "1.7755623882398E+18"), which the backend rejects.
         $otlp = [
             'traceId' => $span->getTraceId(),
             'spanId' => $span->getSpanId(),
             'name' => $span->getOperation(),
             'kind' => $this->mapSpanKind($span->getKind()->value),
-            'startTimeUnixNano' => (string) ($span->getStartTime() * 1_000_000_000),
-            'endTimeUnixNano' => (string) (($span->getEndTime() ?? microtime(true)) * 1_000_000_000),
+            'startTimeUnixNano' => sprintf('%.0f', $span->getStartTime() * 1_000_000_000),
+            'endTimeUnixNano' => sprintf('%.0f', ($span->getEndTime() ?? microtime(true)) * 1_000_000_000),
             'status' => [
                 'code' => $this->mapStatusCode($span->getStatus()->value),
             ],

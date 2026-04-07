@@ -62,7 +62,9 @@ final class Span
     {
         $this->events[] = [
             'name' => $name,
-            'timeUnixNano' => (string) (microtime(true) * 1_000_000_000),
+            // OTLP requires a digit-only stringified uint64. A naive
+            // `(string) ($float * 1e9)` would emit scientific notation.
+            'timeUnixNano' => sprintf('%.0f', microtime(true) * 1_000_000_000),
             'attributes' => $attributes,
         ];
     }
