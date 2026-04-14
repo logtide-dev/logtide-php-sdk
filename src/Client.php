@@ -124,7 +124,10 @@ final class Client implements ClientInterface
 
     private function prepareEvent(Event $event, ?Scope $scope, ?EventHint $hint): ?Event
     {
-        $event->setService($event->getService() ?: $this->options->getService());
+        $service = $event->getService();
+        if ($service === '' || $service === 'unknown') {
+            $event->setService($this->options->getService());
+        }
 
         if ($this->options->getEnvironment() !== null) {
             $event->setEnvironment($this->options->getEnvironment());

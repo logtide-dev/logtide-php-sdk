@@ -74,8 +74,6 @@ final class ClientTest extends TestCase
         $transport = $this->createSpyTransport();
         $client = $this->createClient(['service' => 'my-api'], $transport);
 
-        // Event created without explicit service defaults to 'unknown',
-        // which is falsy in ?: so Options service is applied
         $event = new Event(LogLevel::INFO, 'test');
         $event->setService('');
         $client->captureEvent($event);
@@ -99,14 +97,9 @@ final class ClientTest extends TestCase
         $transport = $this->createSpyTransport();
         $client = $this->createClient(['service' => 'my-api'], $transport);
 
-        // captureLog without explicit service creates event with 'unknown' service,
-        // but 'unknown' is truthy so ?: won't fall through. The real service override
-        // happens when passing null to captureLog
         $client->captureLog(LogLevel::INFO, 'test', [], null, null);
 
-        // With no service override in captureLog, the event gets 'unknown' from Event constructor
-        // which is truthy, so it stays as 'unknown'
-        $this->assertSame('unknown', $transport->sentLogs[0]->getService());
+        $this->assertSame('my-api', $transport->sentLogs[0]->getService());
     }
 
     public function testCaptureEventSetsEnvironmentFromOptions(): void
