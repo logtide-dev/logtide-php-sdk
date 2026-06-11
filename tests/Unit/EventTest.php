@@ -120,9 +120,9 @@ final class EventTest extends TestCase
         $json = json_encode($event->toArray(), JSON_THROW_ON_ERROR);
 
         $this->assertStringContainsString(
-            '"metadata":{}',
+            '"metadata":{"sdk":',
             $json,
-            'Empty metadata must serialize as JSON object {} — never as array []'
+            'Metadata must serialize as a JSON object (never as array []); it always carries the sdk stamp'
         );
     }
 
@@ -133,7 +133,7 @@ final class EventTest extends TestCase
 
         $json = json_encode($event->toArray(), JSON_THROW_ON_ERROR);
 
-        $this->assertStringContainsString('"metadata":{"k":"v"}', $json);
+        $this->assertStringContainsString('"metadata":{"k":"v","sdk":', $json);
     }
 
     public function testToArrayWithoutOptionals(): void

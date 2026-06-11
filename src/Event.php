@@ -259,6 +259,11 @@ final class Event
             $meta['release'] = $this->release;
         }
 
+        // SDK identity stamp (spec 003 §3); caller-provided value wins
+        if (!isset($meta['sdk'])) {
+            $meta['sdk'] = ['name' => Version::SDK_NAME, 'version' => Version::SDK_VERSION];
+        }
+
         return $meta;
     }
 }
