@@ -11,5 +11,5 @@ namespace LogTide;
 final class Version
 {
     public const SDK_NAME = 'logtide-php';
-    public const SDK_VERSION = '0.8.0';
+    public const SDK_VERSION = '0.8.1';
 }

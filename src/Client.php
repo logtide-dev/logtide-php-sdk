@@ -165,7 +165,24 @@ final class Client implements ClientInterface
             }
         }
 
+        // Per-entry sampling, applied after before_send (spec 005 §5)
+        if (!$this->shouldSampleLog()) {
+            return null;
+        }
+
         return $event;
+    }
+
+    private function shouldSampleLog(): bool
+    {
+        $rate = $this->options->getSampleRate();
+        if ($rate >= 1.0) {
+            return true;
+        }
+        if ($rate <= 0.0) {
+            return false;
+        }
+        return (mt_rand() / mt_getrandmax()) < $rate;
     }
 
     private function shouldSampleTrace(): bool

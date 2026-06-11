@@ -25,6 +25,7 @@ final class Options
     private int $circuitBreakerResetMs = 30000;
     private int $maxBreadcrumbs = 100;
     private float $tracesSampleRate = 1.0;
+    private float $sampleRate = 1.0;
     private bool $debug = false;
     private bool $attachStacktrace = false;
     private bool $sendDefaultPii = false;
@@ -82,6 +83,7 @@ final class Options
 
         $floatKeys = [
             'traces_sample_rate' => 'tracesSampleRate',
+            'sample_rate' => 'sampleRate',
             'http_timeout' => 'httpTimeout',
             'http_connect_timeout' => 'httpConnectTimeout',
         ];
@@ -120,6 +122,10 @@ final class Options
             if (array_key_exists($key, $config)) {
                 $options->{$prop} = (float) $config[$key];
             }
+        }
+
+        if ($options->sampleRate < 0.0 || $options->sampleRate > 1.0) {
+            throw new \InvalidArgumentException('sample_rate must be between 0.0 and 1.0');
         }
         foreach ($boolKeys as $key => $prop) {
             if (array_key_exists($key, $config)) {
@@ -220,6 +226,12 @@ final class Options
     public function getTracesSampleRate(): float
     {
         return $this->tracesSampleRate;
+    }
+
+    /** Per-entry log sampling rate in [0.0, 1.0], applied after before_send. */
+    public function getSampleRate(): float
+    {
+        return $this->sampleRate;
     }
 
     public function isDebug(): bool
